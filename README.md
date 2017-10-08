@@ -10,5 +10,6 @@ Voir cet excelent blog ici : https://blog.bandinelli.net/index.php?post/2016/10/
 
 Le chargement du firmware marche avec cette instruction : 
 python -m esptool --port /dev/ttyUSB0 -b 115200 write_flash -fm dio --verify -ff 40m -fs 32m 0x0 /path/to/esp8266-20170823-v1.9.2.bin 
+Site interrsant : http://micropython-on-wemos-d1-mini.readthedocs.io/en/latest/index.html
 
 
