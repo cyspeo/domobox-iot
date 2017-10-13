@@ -6,6 +6,9 @@ const char* password = "XXXXXXXX";
 const char* host = "XXX.XXX.XXX.XXX";
 const int   port = 8080;
 
+char* programmation = "";
+char* timeStr = "";
+
 void setup() {
   Serial.begin(115200);
   delay(10);
@@ -23,7 +26,29 @@ void setup() {
 }
 
 void getProgrammation() {
-  
+    int rc = -1;
+    if(WiFi.status() != WL_CONNECTED) {
+      Serial.println("WiFi not connected !");
+    } else {
+      Serial.print("connecting to ");
+      Serial.println(host);
+      Serial.print("Requesting URL: ");
+      Serial.println(url);
+      http.begin(host,port,url);
+      int httpCode = http.GET();
+      if (httpCode) {
+        if (httpCode == 200) {
+          String payload = http.getString();
+          Serial.println("Domoticz response ");
+          Serial.println(payload);
+          programmation = payload.substring(0,23);
+          timeStr = payload.substring(24);
+          majTime();
+        }
+      } 
+      Serial.println("closing connection");
+      http.end();
+    }
   
 }
 
@@ -36,24 +61,11 @@ void setRelais() {
 }
 
 void loop() {
-  if(WiFi.status() != WL_CONNECTED) {
-    Serial.println("WiFi not connected !");
-    } else {  
-    Serial.print("connecting to ");  Serial.println(host);
-    Serial.print("Requesting URL: ");
-    Serial.println(url);
-  http.begin(host,port,url);
-  int httpCode = http.GET();
-    if (httpCode) {
-      if (httpCode == 200) {
-        String payload = http.getString();
-        Serial.println("Domoticz response "); 
-        Serial.println(payload);
-      }
-    }
-  Serial.println("closing connection");
-  http.end();
-  }
+  getProgrammation();
+  setRelais();
+  
+  // Attendre 60 secondes
+  delay(60);
 }
 
 
